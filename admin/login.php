@@ -1,0 +1,8 @@
+<?php
+require_once __DIR__.'/../config/database.php'; require_once __DIR__.'/../config/auth.php';
+if (!empty($_SESSION['admin_id'])) { header('Location: index.php'); exit; }
+$error='';
+if ($_SERVER['REQUEST_METHOD']==='POST') { validar_csrf(); $correo=trim($_POST['correo']??''); $password=$_POST['password']??''; $stmt=$pdo->prepare('SELECT id,nombre,correo,password FROM usuarios WHERE correo=? LIMIT 1'); $stmt->execute([$correo]); $u=$stmt->fetch(); if($u && password_verify($password,$u['password'])) { session_regenerate_id(true); $_SESSION['admin_id']=$u['id']; $_SESSION['admin_nombre']=$u['nombre']; header('Location: index.php'); exit; } $error='Correo o contraseña incorrectos.'; }
+$pageTitle='Acceso administrador'; require __DIR__.'/../src/header.php'; ?>
+<div class="login-shell"><form class="form-card login-card" method="post"><span class="eyebrow">ÁREA PRIVADA</span><h1>Administración</h1><p>Ingresa con la cuenta de administrador para gestionar la liga.</p><?php if($error): ?><div class="alert alert-error"><?= e($error) ?></div><?php endif; ?><input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>"><label>Correo electrónico<input type="email" name="correo" required autocomplete="username" placeholder="admin@liga.com"></label><label>Contraseña<input type="password" name="password" required autocomplete="current-password" placeholder="Tu contraseña"></label><button class="btn" type="submit">Iniciar sesión</button><a class="back-link" href="../index.php">← Volver al panel público</a></form></div>
+<?php require __DIR__.'/../src/footer.php'; ?>

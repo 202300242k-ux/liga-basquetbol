@@ -1,0 +1,8 @@
+<?php
+require_once __DIR__.'/../config/database.php'; require_once __DIR__.'/../config/auth.php'; admin_requerido();
+$counts=['Equipos'=>(int)$pdo->query('SELECT COUNT(*) FROM equipos')->fetchColumn(),'Jugadores'=>(int)$pdo->query('SELECT COUNT(*) FROM jugadores')->fetchColumn(),'Partidos'=>(int)$pdo->query('SELECT COUNT(*) FROM partidos')->fetchColumn(),'Usuarios'=>(int)$pdo->query('SELECT COUNT(*) FROM usuarios')->fetchColumn()];
+$pageTitle='Panel de administración'; require __DIR__.'/../src/header.php'; ?>
+<section class="admin-welcome"><div><span class="eyebrow">PANEL PRIVADO</span><h1>Hola, <?= e($_SESSION['admin_nombre']??'administrador') ?>.</h1><p>Desde aquí puedes mantener actualizada la información de la competición.</p></div><a class="btn btn-dark" href="logout.php">Cerrar sesión</a></section>
+<div class="admin-stats"><?php foreach($counts as $label=>$count): ?><article class="stat-card"><span><?= e($label) ?></span><strong><?= $count ?></strong></article><?php endforeach; ?></div>
+<h2 class="admin-section-title">Gestión de la liga</h2><div class="admin-links"><a href="equipos.php"><span>🏀</span><strong>Equipos</strong><small>Crear, editar y eliminar equipos</small><b>Gestionar →</b></a><a href="jugadores.php"><span>👤</span><strong>Jugadores</strong><small>Administrar plantillas y dorsales</small><b>Gestionar →</b></a><a href="partidos.php"><span>📅</span><strong>Partidos</strong><small>Programar encuentros y cargar marcadores</small><b>Gestionar →</b></a><a href="../index.php"><span>🌐</span><strong>Vista pública</strong><small>Revisar la información que ve el público</small><b>Abrir sitio →</b></a></div>
+<?php require __DIR__.'/../src/footer.php'; ?>
